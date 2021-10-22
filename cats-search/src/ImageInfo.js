@@ -10,12 +10,37 @@ class ImageInfo {
 
     this.data = data;
 
+    this.handleClick = this.handleClick.bind(this);
+    this.handleKeyup = this.handleKeyup.bind(this);
+
+    $imageInfo.addEventListener('click', this.handleClick);
+    document.addEventListener('keyup', this.handleKeyup);
+
     this.render();
   }
 
   setState(nextData) {
     this.data = nextData;
     this.render();
+  }
+
+  closeImage() {
+    this.setState({
+      ...this.data,
+      visible: false,
+    });
+  }
+
+  handleClick(e) {
+    if (e.target.className === 'ImageInfo' || e.target.className === 'close') {
+      this.closeImage();
+    }
+  }
+
+  handleKeyup(e) {
+    if (e.key === 'Escape') {
+      this.closeImage();
+    }
   }
 
   render() {
