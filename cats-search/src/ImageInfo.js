@@ -1,13 +1,8 @@
 class ImageInfo {
   $imageInfo = null;
-  state = {
-    isLoading: false,
-    visible: false,
-    data: null,
-    error: null,
-  };
+  state = null;
 
-  constructor({ $target }) {
+  constructor({ $target, initialState }) {
     const $imageInfo = document.createElement('div');
     $imageInfo.className = 'ImageInfo';
     this.$imageInfo = $imageInfo;
@@ -18,6 +13,8 @@ class ImageInfo {
 
     $imageInfo.addEventListener('click', this.handleClick);
     document.addEventListener('keyup', this.handleKeyup);
+
+    this.state = initialState;
 
     this.render();
   }

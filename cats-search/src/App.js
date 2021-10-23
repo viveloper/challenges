@@ -8,6 +8,12 @@ class App {
       data: null,
       error: null,
     },
+    image: {
+      isLoading: false,
+      data: null,
+      error: null,
+    },
+    isImageInfoVisible: false,
   };
 
   constructor($target) {
@@ -69,27 +75,36 @@ class App {
       $target,
       initialState: this.state.images,
       onClick: (image) => {
-        this.imageInfo.setState({
-          ...this.imageInfo.state,
-          visible: true,
-          isLoading: true,
-          error: null,
+        this.setState({
+          ...this.state,
+          image: {
+            ...this.state.image,
+            isLoading: true,
+            error: null,
+          },
+          isImageInfoVisible: true,
         });
         api
           .fetchCat(image.id)
           .then(({ data }) => {
-            this.imageInfo.setState({
-              ...this.imageInfo.state,
-              data,
-              isLoading: false,
-              error: null,
+            this.setState({
+              ...this.state,
+              image: {
+                ...this.state.image,
+                data,
+                isLoading: false,
+                error: null,
+              },
             });
           })
           .catch((err) => {
-            this.imageInfo.setState({
-              ...this.imageInfo.state,
-              isLoading: false,
-              error: err.message,
+            this.setState({
+              ...this.state,
+              image: {
+                ...this.state.image,
+                isLoading: false,
+                error: err.message,
+              },
             });
           });
       },
@@ -97,11 +112,19 @@ class App {
 
     this.imageInfo = new ImageInfo({
       $target,
+      initialState: {
+        ...this.state.image,
+        visible: this.state.isImageInfoVisible,
+      },
     });
   }
 
   setState(nextState) {
     this.state = nextState;
     this.searchResult.setState(nextState.images);
+    this.imageInfo.setState({
+      ...nextState.image,
+      visible: this.state.isImageInfoVisible,
+    });
   }
 }
