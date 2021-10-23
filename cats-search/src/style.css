@@ -45,6 +45,10 @@ body * {
   width: 100%;
 }
 
+.SearchInputWrapper {
+  display: flex;
+}
+
 .SearchInput {
   width: 100%;
   font-size: 40px;

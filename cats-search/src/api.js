@@ -20,4 +20,13 @@ const api = {
       }
     });
   },
+  fetchRandomCats: () => {
+    return fetch(`${API_ENDPOINT}/api/cats/random50`).then((res) => {
+      if (res.status === 200) {
+        return res.json();
+      } else {
+        throw new Error('error!');
+      }
+    });
+  },
 };

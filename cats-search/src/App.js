@@ -45,6 +45,30 @@ class App {
             });
           });
       },
+      onRandomSearch: () => {
+        this.setState({
+          ...this.state,
+          images: { ...this.state.images, isLoading: true, error: null },
+        });
+        api
+          .fetchRandomCats()
+          .then(({ data }) => {
+            this.setState({
+              ...this.state,
+              images: { data, isLoading: false, error: null },
+            });
+          })
+          .catch((err) => {
+            this.setState({
+              ...this.state,
+              images: {
+                ...this.state.images,
+                isLoading: false,
+                error: err.message,
+              },
+            });
+          });
+      },
     });
 
     this.searchResult = new SearchResult({
