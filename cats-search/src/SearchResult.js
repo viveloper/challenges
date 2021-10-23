@@ -11,12 +11,23 @@ class SearchResult {
     this.state = initialState;
     this.onClick = onClick;
 
+    this.handleClick = this.handleClick.bind(this);
+
+    this.$searchResult.addEventListener('click', this.handleClick);
+
     this.render();
   }
 
   setState(nextState) {
     this.state = nextState;
     this.render();
+  }
+
+  handleClick(e) {
+    const item = e.target.closest('.item');
+    if (item) {
+      this.onClick(item.dataset['id']);
+    }
   }
 
   render() {
@@ -42,17 +53,11 @@ class SearchResult {
     this.$searchResult.innerHTML = this.state.data
       .map(
         (cat) => `
-          <div class="item">
+          <div class="item" data-id="${cat.id}">
             <img src=${cat.url} alt=${cat.name} />
           </div>
         `
       )
       .join('');
-
-    this.$searchResult.querySelectorAll('.item').forEach(($item, index) => {
-      $item.addEventListener('click', () => {
-        this.onClick(this.state.data[index]);
-      });
-    });
   }
 }

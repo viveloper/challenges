@@ -74,7 +74,7 @@ class App {
     this.searchResult = new SearchResult({
       $target,
       initialState: this.state.images,
-      onClick: (image) => {
+      onClick: (id) => {
         this.setState({
           ...this.state,
           image: {
@@ -85,7 +85,7 @@ class App {
           isImageInfoVisible: true,
         });
         api
-          .fetchCat(image.id)
+          .fetchCat(id)
           .then(({ data }) => {
             this.setState({
               ...this.state,
