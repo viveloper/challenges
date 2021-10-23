@@ -61,3 +61,5 @@ class SearchResult {
       .join('');
   }
 }
+
+export default SearchResult;

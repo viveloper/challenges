@@ -19,7 +19,7 @@ const request = async (url) => {
   }
 };
 
-const api = {
+export const api = {
   fetchCats: (keyword) => {
     return request(`${API_ENDPOINT}/api/cats/search?q=${keyword}`);
   },

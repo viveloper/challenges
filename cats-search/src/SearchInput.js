@@ -32,3 +32,5 @@ class SearchInput {
   }
   render() {}
 }
+
+export default SearchInput;

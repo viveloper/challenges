@@ -80,3 +80,5 @@ class ImageInfo {
     }
   }
 }
+
+export default ImageInfo;
