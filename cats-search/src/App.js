@@ -21,60 +21,57 @@ class App {
 
     this.searchInput = new SearchInput({
       $target,
-      onSearch: (keyword) => {
+      onSearch: async (keyword) => {
         this.setState({
           ...this.state,
           images: { ...this.state.images, isLoading: true, error: null },
         });
-        api
-          .fetchCats(keyword)
-          .then(({ data }) => {
-            this.setState({
-              ...this.state,
-              images: { data, isLoading: false, error: null },
-            });
-          })
-          .catch((err) => {
-            this.setState({
-              ...this.state,
-              images: {
-                ...this.state.images,
-                isLoading: false,
-                error: err.message,
-              },
-            });
+
+        try {
+          const { data } = await api.fetchCats(keyword);
+          this.setState({
+            ...this.state,
+            images: { data, isLoading: false, error: null },
           });
+        } catch (err) {
+          this.setState({
+            ...this.state,
+            images: {
+              ...this.state.images,
+              isLoading: false,
+              error: err.message,
+            },
+          });
+        }
       },
-      onRandomSearch: () => {
+      onRandomSearch: async () => {
         this.setState({
           ...this.state,
           images: { ...this.state.images, isLoading: true, error: null },
         });
-        api
-          .fetchRandomCats()
-          .then(({ data }) => {
-            this.setState({
-              ...this.state,
-              images: { data, isLoading: false, error: null },
-            });
-          })
-          .catch((err) => {
-            this.setState({
-              ...this.state,
-              images: {
-                ...this.state.images,
-                isLoading: false,
-                error: err.message,
-              },
-            });
+        try {
+          const { data } = await api.fetchRandomCats();
+          this.setState({
+            ...this.state,
+            images: { data, isLoading: false, error: null },
           });
+        } catch (err) {
+          this.setState({
+            ...this.state,
+            images: {
+              ...this.state.images,
+              isLoading: false,
+              error: err.message,
+            },
+          });
+        }
       },
     });
 
     this.searchResult = new SearchResult({
       $target,
       initialState: this.state.images,
-      onClick: (id) => {
+      onClick: async (id) => {
         this.setState({
           ...this.state,
           image: {
@@ -84,29 +81,28 @@ class App {
           },
           isImageInfoVisible: true,
         });
-        api
-          .fetchCat(id)
-          .then(({ data }) => {
-            this.setState({
-              ...this.state,
-              image: {
-                ...this.state.image,
-                data,
-                isLoading: false,
-                error: null,
-              },
-            });
-          })
-          .catch((err) => {
-            this.setState({
-              ...this.state,
-              image: {
-                ...this.state.image,
-                isLoading: false,
-                error: err.message,
-              },
-            });
+
+        try {
+          const { data } = await api.fetchCat(id);
+          this.setState({
+            ...this.state,
+            image: {
+              ...this.state.image,
+              data,
+              isLoading: false,
+              error: null,
+            },
           });
+        } catch (err) {
+          this.setState({
+            ...this.state,
+            image: {
+              ...this.state.image,
+              isLoading: false,
+              error: err.message,
+            },
+          });
+        }
       },
     });
 
