@@ -26,7 +26,7 @@ class SearchResult {
     }
 
     if (this.state.error) {
-      this.$searchResult.innerHTML = `<div>Error!</div>`;
+      this.$searchResult.innerHTML = `<div>${this.state.error}</div>`;
       return;
     }
 

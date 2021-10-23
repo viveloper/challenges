@@ -1,14 +1,17 @@
 class ImageInfo {
   $imageInfo = null;
-  state = null;
+  state = {
+    isLoading: false,
+    visible: false,
+    data: null,
+    error: null,
+  };
 
-  constructor({ $target, initState }) {
+  constructor({ $target }) {
     const $imageInfo = document.createElement('div');
     $imageInfo.className = 'ImageInfo';
     this.$imageInfo = $imageInfo;
     $target.appendChild($imageInfo);
-
-    this.state = initState;
 
     this.handleClick = this.handleClick.bind(this);
     this.handleKeyup = this.handleKeyup.bind(this);
@@ -57,7 +60,7 @@ class ImageInfo {
     if (this.state.error) {
       this.$imageInfo.innerHTML = `
         <div class="content-wrapper">
-          <div style="width: 50vw; height: 50vh; display: flex; justify-content: center; align-items: center;">Error!</div>
+          <div style="width: 50vw; height: 50vh; display: flex; justify-content: center; align-items: center;">${this.state.error}</div>
         </div>`;
       return;
     }
