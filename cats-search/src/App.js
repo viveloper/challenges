@@ -5,7 +5,7 @@ class App {
   state = {
     images: {
       isLoading: false,
-      data: [],
+      data: null,
       error: null,
     },
   };

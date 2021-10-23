@@ -30,6 +30,10 @@ class SearchResult {
       return;
     }
 
+    if (!this.state.data) {
+      return;
+    }
+
     if (!this.state.data.length) {
       this.$searchResult.innerHTML = `<div>No Result!</div>`;
       return;
