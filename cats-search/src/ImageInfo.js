@@ -2,7 +2,7 @@ class ImageInfo {
   $imageInfo = null;
   state = null;
 
-  constructor({ $target, initialState }) {
+  constructor({ $target, initialState, onClose }) {
     const $imageInfo = document.createElement('div');
     $imageInfo.className = 'ImageInfo';
     this.$imageInfo = $imageInfo;
@@ -15,6 +15,7 @@ class ImageInfo {
     document.addEventListener('keyup', this.handleKeyup);
 
     this.state = initialState;
+    this.onClose = onClose;
 
     this.render();
   }
@@ -24,22 +25,15 @@ class ImageInfo {
     this.render();
   }
 
-  closeImage() {
-    this.setState({
-      ...this.state,
-      visible: false,
-    });
-  }
-
   handleClick(e) {
     if (e.target.className === 'ImageInfo' || e.target.className === 'close') {
-      this.closeImage();
+      this.onClose();
     }
   }
 
   handleKeyup(e) {
     if (e.key === 'Escape') {
-      this.closeImage();
+      this.onClose();
     }
   }
 

@@ -5,11 +5,11 @@ class SearchInput {
     const $searchInputWrapper = document.createElement('div');
     $searchInputWrapper.className = 'SearchInputWrapper';
 
-    const $searchInput = document.createElement('input');
-    this.$searchInput = $searchInput;
+    this.$searchInput = document.createElement('input');
     this.$searchInput.placeholder = '고양이를 검색해보세요.|';
-    $searchInput.className = 'SearchInput';
-    $searchInputWrapper.appendChild($searchInput);
+    this.$searchInput.className = 'SearchInput';
+    this.$searchInput.autofocus = true;
+    $searchInputWrapper.appendChild(this.$searchInput);
 
     const $randomButton = document.createElement('button');
     this.$randomButton = $randomButton;
@@ -18,10 +18,14 @@ class SearchInput {
 
     $target.appendChild($searchInputWrapper);
 
-    $searchInput.addEventListener('keyup', (e) => {
+    this.$searchInput.addEventListener('keyup', (e) => {
       if (e.key === 'Enter') {
         onSearch(e.target.value);
       }
+    });
+
+    this.$searchInput.addEventListener('click', () => {
+      this.clearInput();
     });
 
     $randomButton.addEventListener('click', () => {
@@ -30,6 +34,11 @@ class SearchInput {
 
     console.log('SearchInput created.', this);
   }
+
+  clearInput() {
+    this.$searchInput.value = '';
+  }
+
   render() {}
 }
 

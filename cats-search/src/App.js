@@ -25,6 +25,7 @@ class App {
     this.fetchCats = this.fetchCats.bind(this);
     this.fetchRandomCats = this.fetchRandomCats.bind(this);
     this.fetchCat = this.fetchCat.bind(this);
+    this.handleImageInfoClose = this.handleImageInfoClose.bind(this);
 
     this.searchInput = new SearchInput({
       $target,
@@ -44,6 +45,7 @@ class App {
         ...this.state.image,
         visible: this.state.isImageInfoVisible,
       },
+      onClose: this.handleImageInfoClose,
     });
   }
 
@@ -53,6 +55,13 @@ class App {
     this.imageInfo.setState({
       ...nextState.image,
       visible: this.state.isImageInfoVisible,
+    });
+  }
+
+  handleImageInfoClose() {
+    this.setState({
+      ...this.state,
+      isImageInfoVisible: false,
     });
   }
 
@@ -88,6 +97,10 @@ class App {
   }
 
   async fetchCats(keyword) {
+    if (!keyword) {
+      return;
+    }
+
     this.setAsyncLoadingState('images');
     try {
       const { data } = await api.fetchCats(keyword);
