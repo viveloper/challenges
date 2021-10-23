@@ -1,26 +1,41 @@
 class SearchResult {
   $searchResult = null;
-  data = null;
+  state = null;
   onClick = null;
 
-  constructor({ $target, initialData, onClick }) {
+  constructor({ $target, initialState, onClick }) {
     this.$searchResult = document.createElement('div');
     this.$searchResult.className = 'SearchResult';
     $target.appendChild(this.$searchResult);
 
-    this.data = initialData;
+    this.state = initialState;
     this.onClick = onClick;
 
     this.render();
   }
 
-  setState(nextData) {
-    this.data = nextData;
+  setState(nextState) {
+    this.state = nextState;
     this.render();
   }
 
   render() {
-    this.$searchResult.innerHTML = this.data
+    if (this.state.isLoading) {
+      this.$searchResult.innerHTML = `<div>Loading...</div>`;
+      return;
+    }
+
+    if (this.state.error) {
+      this.$searchResult.innerHTML = `<div>Error!</div>`;
+      return;
+    }
+
+    if (!this.state.data.length) {
+      this.$searchResult.innerHTML = `<div>No Result!</div>`;
+      return;
+    }
+
+    this.$searchResult.innerHTML = this.state.data
       .map(
         (cat) => `
           <div class="item">
@@ -32,7 +47,7 @@ class SearchResult {
 
     this.$searchResult.querySelectorAll('.item').forEach(($item, index) => {
       $item.addEventListener('click', () => {
-        this.onClick(this.data[index]);
+        this.onClick(this.state.data[index]);
       });
     });
   }

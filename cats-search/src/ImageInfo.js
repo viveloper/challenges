@@ -1,14 +1,14 @@
 class ImageInfo {
   $imageInfo = null;
-  data = null;
+  state = null;
 
-  constructor({ $target, data }) {
+  constructor({ $target, initState }) {
     const $imageInfo = document.createElement('div');
     $imageInfo.className = 'ImageInfo';
     this.$imageInfo = $imageInfo;
     $target.appendChild($imageInfo);
 
-    this.data = data;
+    this.state = initState;
 
     this.handleClick = this.handleClick.bind(this);
     this.handleKeyup = this.handleKeyup.bind(this);
@@ -19,15 +19,14 @@ class ImageInfo {
     this.render();
   }
 
-  setState(nextData) {
-    console.log(nextData);
-    this.data = nextData;
+  setState(nextState) {
+    this.state = nextState;
     this.render();
   }
 
   closeImage() {
     this.setState({
-      ...this.data,
+      ...this.state,
       visible: false,
     });
   }
@@ -45,8 +44,26 @@ class ImageInfo {
   }
 
   render() {
-    if (this.data.visible) {
-      const { name, url, temperament, origin } = this.data.image;
+    this.$imageInfo.style.display = this.state.visible ? 'block' : 'none';
+
+    if (this.state.isLoading) {
+      this.$imageInfo.innerHTML = `
+        <div class="content-wrapper">
+          <div style="width: 50vw; height: 50vh; display: flex; justify-content: center; align-items: center;">Loading...</div>
+        </div>`;
+      return;
+    }
+
+    if (this.state.error) {
+      this.$imageInfo.innerHTML = `
+        <div class="content-wrapper">
+          <div style="width: 50vw; height: 50vh; display: flex; justify-content: center; align-items: center;">Error!</div>
+        </div>`;
+      return;
+    }
+
+    if (this.state.visible) {
+      const { name, url, temperament, origin } = this.state.data;
 
       this.$imageInfo.innerHTML = `
         <div class="content-wrapper">
@@ -54,15 +71,12 @@ class ImageInfo {
             <span>${name}</span>
             <div class="close">x</div>
           </div>
-          <img src="${url}" alt="${name}"/>        
+          <img src="${url}" alt="${name}"/>
           <div class="description">
             <div>성격: ${temperament}</div>
             <div>태생: ${origin}</div>
           </div>
         </div>`;
-      this.$imageInfo.style.display = 'block';
-    } else {
-      this.$imageInfo.style.display = 'none';
     }
   }
 }

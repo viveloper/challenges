@@ -3,11 +3,21 @@ const API_ENDPOINT =
 
 const api = {
   fetchCats: (keyword) => {
-    return fetch(`${API_ENDPOINT}/api/cats/search?q=${keyword}`).then((res) =>
-      res.json()
-    );
+    return fetch(`${API_ENDPOINT}/api/cats/search?q=${keyword}`).then((res) => {
+      if (res.status === 200) {
+        return res.json();
+      } else {
+        throw new Error('error!');
+      }
+    });
   },
   fetchCat: (id) => {
-    return fetch(`${API_ENDPOINT}/api/cats/${id}`).then((res) => res.json());
+    return fetch(`${API_ENDPOINT}/api/cats/${id}`).then((res) => {
+      if (res.status === 200) {
+        return res.json();
+      } else {
+        throw new Error('error!');
+      }
+    });
   },
 };
