@@ -17,6 +17,7 @@ class App {
       error: null,
     },
     isImageInfoVisible: false,
+    recentKeywords: [],
   };
 
   constructor($target) {
@@ -29,7 +30,16 @@ class App {
 
     this.searchInput = new SearchInput({
       $target,
-      onSearch: this.fetchCats,
+      initialState: {
+        recentKeywords: this.state.recentKeywords,
+      },
+      onSearch: (keyword) => {
+        if (!keyword) {
+          return;
+        }
+        this.addRecentKeyword(keyword);
+        this.fetchCats(keyword);
+      },
       onRandomSearch: this.fetchRandomCats,
     });
 
@@ -56,12 +66,25 @@ class App {
       ...nextState.image,
       visible: this.state.isImageInfoVisible,
     });
+    this.searchInput.setState({
+      recentKeywords: this.state.recentKeywords,
+    });
   }
 
   handleImageInfoClose() {
     this.setState({
       ...this.state,
       isImageInfoVisible: false,
+    });
+  }
+
+  addRecentKeyword(keyword) {
+    this.setState({
+      ...this.state,
+      recentKeywords: [
+        keyword,
+        ...this.state.recentKeywords.filter((v) => v !== keyword).slice(0, 4),
+      ],
     });
   }
 
@@ -97,10 +120,6 @@ class App {
   }
 
   async fetchCats(keyword) {
-    if (!keyword) {
-      return;
-    }
-
     this.setAsyncLoadingState('images');
     try {
       const { data } = await api.fetchCats(keyword);

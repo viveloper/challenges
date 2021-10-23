@@ -1,7 +1,9 @@
 const TEMPLATE = '<input type="text">';
 
 class SearchInput {
-  constructor({ $target, onSearch, onRandomSearch }) {
+  state = null;
+
+  constructor({ $target, initialState, onSearch, onRandomSearch }) {
     const $searchInputWrapper = document.createElement('div');
     $searchInputWrapper.className = 'SearchInputWrapper';
 
@@ -18,6 +20,22 @@ class SearchInput {
 
     $target.appendChild($searchInputWrapper);
 
+    this.$recentKeywords = document.createElement('ul');
+    this.$recentKeywords.className = 'RecentKeywords';
+    this.$recentKeywords.addEventListener('click', (e) => {
+      const item = e.target.closest('.item');
+      if (!item || item.classList.contains('no-keyword')) {
+        return;
+      }
+      const keyword = item.textContent;
+      this.$searchInput.value = keyword;
+      onSearch(keyword);
+    });
+
+    $target.appendChild(this.$recentKeywords);
+
+    this.state = initialState;
+
     this.$searchInput.addEventListener('keyup', (e) => {
       if (e.key === 'Enter') {
         onSearch(e.target.value);
@@ -32,14 +50,32 @@ class SearchInput {
       onRandomSearch();
     });
 
+    this.render();
+
     console.log('SearchInput created.', this);
+  }
+
+  setState(nextState) {
+    this.state = nextState;
+    this.render();
   }
 
   clearInput() {
     this.$searchInput.value = '';
   }
 
-  render() {}
+  render() {
+    const { recentKeywords } = this.state;
+
+    if (!recentKeywords.length) {
+      this.$recentKeywords.innerHTML = `<li class="item no-keyword">최근 검색 기록이 없습니다.</li>`;
+      return;
+    }
+
+    this.$recentKeywords.innerHTML = recentKeywords
+      .map((keyword) => `<li class="item">${keyword}</li>`)
+      .join('');
+  }
 }
 
 export default SearchInput;
