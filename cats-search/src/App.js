@@ -22,91 +22,20 @@ class App {
   constructor($target) {
     this.$target = $target;
 
+    this.fetchCats = this.fetchCats.bind(this);
+    this.fetchRandomCats = this.fetchRandomCats.bind(this);
+    this.fetchCat = this.fetchCat.bind(this);
+
     this.searchInput = new SearchInput({
       $target,
-      onSearch: async (keyword) => {
-        this.setState({
-          ...this.state,
-          images: { ...this.state.images, isLoading: true, error: null },
-        });
-
-        try {
-          const { data } = await api.fetchCats(keyword);
-          this.setState({
-            ...this.state,
-            images: { data, isLoading: false, error: null },
-          });
-        } catch (err) {
-          this.setState({
-            ...this.state,
-            images: {
-              ...this.state.images,
-              isLoading: false,
-              error: err.message,
-            },
-          });
-        }
-      },
-      onRandomSearch: async () => {
-        this.setState({
-          ...this.state,
-          images: { ...this.state.images, isLoading: true, error: null },
-        });
-        try {
-          const { data } = await api.fetchRandomCats();
-          this.setState({
-            ...this.state,
-            images: { data, isLoading: false, error: null },
-          });
-        } catch (err) {
-          this.setState({
-            ...this.state,
-            images: {
-              ...this.state.images,
-              isLoading: false,
-              error: err.message,
-            },
-          });
-        }
-      },
+      onSearch: this.fetchCats,
+      onRandomSearch: this.fetchRandomCats,
     });
 
     this.searchResult = new SearchResult({
       $target,
       initialState: this.state.images,
-      onClick: async (id) => {
-        this.setState({
-          ...this.state,
-          image: {
-            ...this.state.image,
-            isLoading: true,
-            error: null,
-          },
-          isImageInfoVisible: true,
-        });
-
-        try {
-          const { data } = await api.fetchCat(id);
-          this.setState({
-            ...this.state,
-            image: {
-              ...this.state.image,
-              data,
-              isLoading: false,
-              error: null,
-            },
-          });
-        } catch (err) {
-          this.setState({
-            ...this.state,
-            image: {
-              ...this.state.image,
-              isLoading: false,
-              error: err.message,
-            },
-          });
-        }
-      },
+      onClick: this.fetchCat,
     });
 
     this.imageInfo = new ImageInfo({
@@ -125,6 +54,72 @@ class App {
       ...nextState.image,
       visible: this.state.isImageInfoVisible,
     });
+  }
+
+  setAsyncLoadingState(key) {
+    this.setState({
+      ...this.state,
+      [key]: {
+        ...this.state[key],
+        isLoading: true,
+        error: null,
+      },
+    });
+  }
+  setAsyncSuccessState(key, data) {
+    this.setState({
+      ...this.state,
+      [key]: {
+        data,
+        isLoading: false,
+        error: null,
+      },
+    });
+  }
+  setAsyncFailState(key, err) {
+    this.setState({
+      ...this.state,
+      [key]: {
+        ...this.state[key],
+        isLoading: false,
+        error: err.message,
+      },
+    });
+  }
+
+  async fetchCats(keyword) {
+    this.setAsyncLoadingState('images');
+    try {
+      const { data } = await api.fetchCats(keyword);
+      this.setAsyncSuccessState('images', data);
+    } catch (err) {
+      this.setAsyncFailState('images', err);
+    }
+  }
+
+  async fetchRandomCats() {
+    this.setAsyncLoadingState('images');
+    try {
+      const { data } = await api.fetchRandomCats();
+      this.setAsyncSuccessState('images', data);
+    } catch (err) {
+      this.setAsyncFailState('images', err);
+    }
+  }
+
+  async fetchCat(id) {
+    this.setAsyncLoadingState('image');
+    this.setState({
+      ...this.state,
+      isImageInfoVisible: true,
+    });
+
+    try {
+      const { data } = await api.fetchCat(id);
+      this.setAsyncSuccessState('image', data);
+    } catch (err) {
+      this.setAsyncFailState('image', err);
+    }
   }
 }
 
