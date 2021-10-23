@@ -20,6 +20,7 @@ class ImageInfo {
   }
 
   setState(nextData) {
+    console.log(nextData);
     this.data = nextData;
     this.render();
   }
