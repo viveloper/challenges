@@ -14,7 +14,7 @@ class SearchInput {
     $searchInputWrapper.appendChild(this.$searchInput);
 
     const $randomButton = document.createElement('button');
-    this.$randomButton = $randomButton;
+    $randomButton.className = 'RandomButton';
     $randomButton.textContent = 'Random';
     $searchInputWrapper.appendChild($randomButton);
 

@@ -8,7 +8,7 @@ class App {
   state = {
     images: {
       isLoading: false,
-      data: null,
+      data: JSON.parse(localStorage.getItem('images')) || null,
       error: null,
     },
     image: {
@@ -17,7 +17,7 @@ class App {
       error: null,
     },
     isImageInfoVisible: false,
-    recentKeywords: [],
+    recentKeywords: JSON.parse(localStorage.getItem('recentKeywords')) || [],
   };
 
   constructor($target) {
@@ -61,14 +61,20 @@ class App {
 
   setState(nextState) {
     this.state = nextState;
-    this.searchResult.setState(nextState.images);
+    this.searchResult.setState(this.state.images);
     this.imageInfo.setState({
-      ...nextState.image,
+      ...this.state.image,
       visible: this.state.isImageInfoVisible,
     });
     this.searchInput.setState({
       recentKeywords: this.state.recentKeywords,
     });
+
+    localStorage.setItem('images', JSON.stringify(this.state.images.data));
+    localStorage.setItem(
+      'recentKeywords',
+      JSON.stringify(this.state.recentKeywords)
+    );
   }
 
   handleImageInfoClose() {
