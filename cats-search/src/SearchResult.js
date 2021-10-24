@@ -56,7 +56,7 @@ class SearchResult {
       .map(
         (cat) => `
           <div class="item" data-id="${cat.id}">
-            <img class="lazy" data-src="${cat.url}" alt=${cat.name} />
+            <img class="lazy" data-src="${cat.url}" alt=${cat.name} title="${cat.name}" />
           </div>
         `
       )
