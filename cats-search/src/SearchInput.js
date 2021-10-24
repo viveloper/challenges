@@ -47,6 +47,7 @@ class SearchInput {
     });
 
     $randomButton.addEventListener('click', () => {
+      this.clearInput();
       onRandomSearch();
     });
 
