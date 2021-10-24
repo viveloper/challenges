@@ -1,3 +1,5 @@
+import { lazyLoadImage } from './utils/LazyLoadImage.js';
+
 class SearchResult {
   $searchResult = null;
   state = null;
@@ -54,11 +56,15 @@ class SearchResult {
       .map(
         (cat) => `
           <div class="item" data-id="${cat.id}">
-            <img src=${cat.url} alt=${cat.name} />
+            <img class="lazy" data-src="${cat.url}" alt=${cat.name} />
           </div>
         `
       )
       .join('');
+
+    this.$searchResult
+      .querySelectorAll('img')
+      .forEach((img) => lazyLoadImage(img));
   }
 }
 
