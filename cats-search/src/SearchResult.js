@@ -23,6 +23,10 @@ class SearchResult {
     this.$loading.appendChild(loadingTextEl);
     searchResultWrapper.appendChild(this.$loading);
 
+    this.$error = document.createElement('div');
+    this.$error.className = 'ErrorSearch';
+    searchResultWrapper.appendChild(this.$error);
+
     $target.appendChild(searchResultWrapper);
 
     this.state = initialState;
@@ -33,6 +37,9 @@ class SearchResult {
   }
 
   setState(nextState) {
+    if (this.state === nextState) {
+      return;
+    }
     this.state = nextState;
     this.render();
   }
@@ -44,14 +51,33 @@ class SearchResult {
     }
   }
 
+  addScrollFetch() {
+    const scrollEndArea = document.createElement('div');
+    setIntersctionObserver(
+      scrollEndArea,
+      () => {
+        if (!this.state.isLoading) {
+          this.onNextPageSearch();
+        }
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+    this.$searchResult.appendChild(scrollEndArea);
+  }
+
   render() {
     const { isLoading, data, error } = this.state;
 
     this.$loading.style.display = isLoading ? 'flex' : 'none';
 
+    this.$error.style.display = error ? 'flex' : 'none';
     if (error) {
-      // this.$searchResult.innerHTML = `<div>${this.state.error}</div>`;
-      alert(error);
+      this.$error.innerHTML = `<span>${error}</span>`;
+      setTimeout(() => {
+        this.$error.style.display = 'none';
+      }, 2000);
       return;
     }
 
@@ -78,19 +104,7 @@ class SearchResult {
       .querySelectorAll('img')
       .forEach((img) => lazyLoadImage(img));
 
-    const scrollEndArea = document.createElement('div');
-    setIntersctionObserver(
-      scrollEndArea,
-      () => {
-        if (!isLoading) {
-          this.onNextPageSearch();
-        }
-      },
-      {
-        threshold: 0.1,
-      }
-    );
-    this.$searchResult.appendChild(scrollEndArea);
+    this.addScrollFetch();
   }
 }
 

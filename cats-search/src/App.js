@@ -67,6 +67,9 @@ class App {
   }
 
   setState(nextState) {
+    if (this.state === nextState) {
+      return;
+    }
     this.state = nextState;
     this.searchResult.setState(this.state.images);
     this.imageInfo.setState({

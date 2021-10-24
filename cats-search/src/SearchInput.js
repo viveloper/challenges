@@ -57,6 +57,9 @@ class SearchInput {
   }
 
   setState(nextState) {
+    if (this.state === nextState) {
+      return;
+    }
     this.state = nextState;
     this.render();
   }
