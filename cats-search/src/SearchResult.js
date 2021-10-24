@@ -1,21 +1,33 @@
-import { lazyLoadImage } from './utils/LazyLoadImage.js';
+import { lazyLoadImage } from './utils/lazyLoadImage.js';
+import { setIntersctionObserver } from './utils/intersectionObserverUtils.js';
 
 class SearchResult {
   $searchResult = null;
   state = null;
   onClick = null;
 
-  constructor({ $target, initialState, onClick }) {
+  constructor({ $target, initialState, onClick, onNextPageSearch }) {
+    const searchResultWrapper = document.createElement('div');
+
     this.$searchResult = document.createElement('div');
     this.$searchResult.className = 'SearchResult';
-    $target.appendChild(this.$searchResult);
+    this.handleClick = this.handleClick.bind(this);
+    this.$searchResult.addEventListener('click', this.handleClick);
+
+    searchResultWrapper.appendChild(this.$searchResult);
+
+    this.$loading = document.createElement('div');
+    this.$loading.className = 'LoadingSearch';
+    const loadingTextEl = document.createElement('span');
+    loadingTextEl.textContent = 'Loading...';
+    this.$loading.appendChild(loadingTextEl);
+    searchResultWrapper.appendChild(this.$loading);
+
+    $target.appendChild(searchResultWrapper);
 
     this.state = initialState;
     this.onClick = onClick;
-
-    this.handleClick = this.handleClick.bind(this);
-
-    this.$searchResult.addEventListener('click', this.handleClick);
+    this.onNextPageSearch = onNextPageSearch;
 
     this.render();
   }
@@ -33,26 +45,26 @@ class SearchResult {
   }
 
   render() {
-    if (this.state.isLoading) {
-      this.$searchResult.innerHTML = `<div>Loading...</div>`;
+    const { isLoading, data, error } = this.state;
+
+    this.$loading.style.display = isLoading ? 'flex' : 'none';
+
+    if (error) {
+      // this.$searchResult.innerHTML = `<div>${this.state.error}</div>`;
+      alert(error);
       return;
     }
 
-    if (this.state.error) {
-      this.$searchResult.innerHTML = `<div>${this.state.error}</div>`;
+    if (!data) {
       return;
     }
 
-    if (!this.state.data) {
-      return;
-    }
-
-    if (!this.state.data.length) {
+    if (!data.length) {
       this.$searchResult.innerHTML = `<div>No Result!</div>`;
       return;
     }
 
-    this.$searchResult.innerHTML = this.state.data
+    this.$searchResult.innerHTML = data
       .map(
         (cat) => `
           <div class="item" data-id="${cat.id}">
@@ -65,6 +77,20 @@ class SearchResult {
     this.$searchResult
       .querySelectorAll('img')
       .forEach((img) => lazyLoadImage(img));
+
+    const scrollEndArea = document.createElement('div');
+    setIntersctionObserver(
+      scrollEndArea,
+      () => {
+        if (!isLoading) {
+          this.onNextPageSearch();
+        }
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+    this.$searchResult.appendChild(scrollEndArea);
   }
 }
 

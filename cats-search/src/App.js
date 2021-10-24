@@ -47,6 +47,13 @@ class App {
       $target,
       initialState: this.state.images,
       onClick: this.fetchCat,
+      onNextPageSearch: () => {
+        const keyword = this.searchInput.$searchInput.value;
+        if (!keyword) {
+          return;
+        }
+        this.fetchCatsAndAppend(keyword);
+      },
     });
 
     this.imageInfo = new ImageInfo({
@@ -130,6 +137,16 @@ class App {
     try {
       const { data } = await api.fetchCats(keyword);
       this.setAsyncSuccessState('images', data);
+    } catch (err) {
+      this.setAsyncFailState('images', err);
+    }
+  }
+
+  async fetchCatsAndAppend(keyword) {
+    this.setAsyncLoadingState('images');
+    try {
+      const { data } = await api.fetchCats(keyword);
+      this.setAsyncSuccessState('images', [...this.state.images.data, ...data]);
     } catch (err) {
       this.setAsyncFailState('images', err);
     }
