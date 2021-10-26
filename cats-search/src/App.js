@@ -1,7 +1,10 @@
 import SearchInput from './SearchInput.js';
 import SearchResult from './SearchResult.js';
 import ImageInfo from './ImageInfo.js';
+import RandomBanner from './RandomBanner.js';
 import { api } from './api.js';
+
+const RANDOM_BANNER_SIZE = 5;
 
 class App {
   $target = null;
@@ -16,7 +19,13 @@ class App {
       data: null,
       error: null,
     },
+    randomImages: {
+      isLoading: false,
+      data: null,
+      error: null,
+    },
     isImageInfoVisible: false,
+    randomBannerStartIndex: 0,
     recentKeywords: JSON.parse(localStorage.getItem('recentKeywords')) || [],
   };
 
@@ -27,6 +36,8 @@ class App {
     this.fetchRandomCats = this.fetchRandomCats.bind(this);
     this.fetchCat = this.fetchCat.bind(this);
     this.handleImageInfoClose = this.handleImageInfoClose.bind(this);
+    this.handleClickRandomPrev = this.handleClickRandomPrev.bind(this);
+    this.handleClickRandomNext = this.handleClickRandomNext.bind(this);
 
     this.searchInput = new SearchInput({
       $target,
@@ -41,6 +52,16 @@ class App {
         this.fetchCats(keyword);
       },
       onRandomSearch: this.fetchRandomCats,
+    });
+
+    this.randomBanner = new RandomBanner({
+      $target,
+      initialState: {
+        ...this.state.randomImages,
+        bannerStartIndex: this.state.randomBannerStartIndex,
+      },
+      onClickPrev: this.handleClickRandomPrev,
+      onClickNext: this.handleClickRandomNext,
     });
 
     this.searchResult = new SearchResult({
@@ -64,6 +85,8 @@ class App {
       },
       onClose: this.handleImageInfoClose,
     });
+
+    this.fetchRandomCats();
   }
 
   setState(nextState) {
@@ -71,7 +94,9 @@ class App {
       return;
     }
     this.state = nextState;
-    this.searchResult.setState(this.state.images);
+    this.searchResult.setState({
+      ...this.state.images,
+    });
     this.imageInfo.setState({
       ...this.state.image,
       visible: this.state.isImageInfoVisible,
@@ -79,12 +104,37 @@ class App {
     this.searchInput.setState({
       recentKeywords: this.state.recentKeywords,
     });
+    this.randomBanner.setState({
+      ...this.state.randomImages,
+      bannerStartIndex: this.state.randomBannerStartIndex,
+    });
 
     localStorage.setItem('images', JSON.stringify(this.state.images.data));
     localStorage.setItem(
       'recentKeywords',
       JSON.stringify(this.state.recentKeywords)
     );
+  }
+
+  handleClickRandomPrev() {
+    if (this.state.randomBannerStartIndex > 0) {
+      this.setState({
+        ...this.state,
+        randomBannerStartIndex: this.state.randomBannerStartIndex - 1,
+      });
+    }
+  }
+
+  handleClickRandomNext() {
+    if (
+      this.state.randomBannerStartIndex + RANDOM_BANNER_SIZE <
+      this.state.randomImages.data.length
+    ) {
+      this.setState({
+        ...this.state,
+        randomBannerStartIndex: this.state.randomBannerStartIndex + 1,
+      });
+    }
   }
 
   handleImageInfoClose() {
@@ -156,12 +206,12 @@ class App {
   }
 
   async fetchRandomCats() {
-    this.setAsyncLoadingState('images');
+    this.setAsyncLoadingState('randomImages');
     try {
       const { data } = await api.fetchRandomCats();
-      this.setAsyncSuccessState('images', data);
+      this.setAsyncSuccessState('randomImages', data);
     } catch (err) {
-      this.setAsyncFailState('images', err);
+      this.setAsyncFailState('randomImages', err);
     }
   }
 

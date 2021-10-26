@@ -26,7 +26,7 @@ body * {
 }
 
 .SearchResult {
-  margin-top: 10px;
+  margin-top: 50px;
   display: grid;
   grid-template-columns: repeat(4, minmax(250px, 1fr));
   grid-gap: 10px;
@@ -50,6 +50,55 @@ body * {
   display: inline-block;
   margin: 0 0 1em;
   width: 100%;
+}
+
+.RandomBanner {
+  position: relative;
+}
+
+.RandomBanner .list {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(200px, 1fr));
+  grid-gap: 10px;
+  list-style: none;
+  padding: 0;
+}
+
+.RandomBanner .list .item {
+  background-color: #eee;
+  display: inline-block;
+  width: 100%;
+}
+
+.RandomBanner .list img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.RandomBanner .ButtonGroup {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0 1rem;
+}
+
+.RandomBanner .ButtonGroup button {
+  background: rgba(150, 150, 150, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  font-size: 2.5rem;
+  color: #fff;
+}
+
+.RandomBanner .ButtonGroup button:hover {
+  cursor: pointer;
+  opacity: 0.8;
 }
 
 .LoadingSearch {
