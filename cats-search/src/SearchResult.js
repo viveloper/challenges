@@ -77,6 +77,7 @@ class SearchResult {
       this.$error.innerHTML = `<span>${error}</span>`;
       setTimeout(() => {
         this.$error.style.display = 'none';
+        this.addScrollFetch();
       }, 2000);
       return;
     }
