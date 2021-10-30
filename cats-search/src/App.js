@@ -9,6 +9,7 @@ const RANDOM_BANNER_SIZE = 5;
 class App {
   $target = null;
   state = {
+    theme: 'light',
     images: {
       isLoading: false,
       data: JSON.parse(localStorage.getItem('images')) || null,
@@ -38,6 +39,13 @@ class App {
     this.handleImageInfoClose = this.handleImageInfoClose.bind(this);
     this.handleClickRandomPrev = this.handleClickRandomPrev.bind(this);
     this.handleClickRandomNext = this.handleClickRandomNext.bind(this);
+    this.toggleTheme = this.toggleTheme.bind(this);
+
+    const toggleThemeButton = document.createElement('button');
+    toggleThemeButton.className = 'ToggleThemeButton';
+    toggleThemeButton.textContent = 'Change Theme';
+    toggleThemeButton.addEventListener('click', this.toggleTheme);
+    $target.appendChild(toggleThemeButton);
 
     this.searchInput = new SearchInput({
       $target,
@@ -114,6 +122,19 @@ class App {
       'recentKeywords',
       JSON.stringify(this.state.recentKeywords)
     );
+  }
+
+  toggleTheme() {
+    const body = document.querySelector('body');
+    if (this.state.theme === 'light') {
+      body.classList.add('dark');
+    } else {
+      body.classList.remove('dark');
+    }
+    this.setState({
+      ...this.state,
+      theme: this.state.theme === 'light' ? 'dark' : 'light',
+    });
   }
 
   handleClickRandomPrev() {
